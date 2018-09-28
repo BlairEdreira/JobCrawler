@@ -26,16 +26,22 @@ namespace WebCrawler
 
         private static async Task WebCrawlAsync()
         {
-            // INPUTS
-            var keyWord = "";
-            var location = "New York";
-            var radius = "";
+            var keyWord = "full stack developer";
+            var location = "New York, NY";
+            var radius = "0";
             string[] pages = { "0", "10" };
-            // INPUTS
 
+            // KEYWORD
             Console.WriteLine(String.Format("KeyWord: "));
             if (String.IsNullOrEmpty(keyWord))
+            {
                 keyWord = Console.ReadLine();
+            }
+            else
+            {
+                Console.WriteLine(keyWord);
+            }
+            // LOCATION
             Console.WriteLine(String.Format("Location: "));
             if (String.IsNullOrEmpty(location))
             {
@@ -45,14 +51,21 @@ namespace WebCrawler
             {
                 Console.WriteLine(location);
             }
+            // RADIUS
             Console.WriteLine(String.Format("Radius: "));
             if (String.IsNullOrEmpty(radius))
+            {
                 radius = Console.ReadLine();
+            }
+            else
+            {
+                Console.WriteLine(radius);
+            }
 
 
             List<HtmlNode> nodes;
             var webGet = new HtmlWeb();
-
+            Console.WriteLine(String.Format("INDEED LINK: https://www.indeed.com/jobs?q={0}&l={1}&radius={2}&start=0", keyWord, location, radius));
             for (int i = 0; i < pages.Length; i++)
             {
                 var url = String.Format("https://www.indeed.com/jobs?q={0}&l={1}&radius={2}&start={3}", keyWord, location, radius, pages[i]);
@@ -79,6 +92,36 @@ namespace WebCrawler
                         {
                             Console.WriteLine(String.Format("LOCATION: {0}", loc));
                         }
+
+                        string lnk = String.Format("https://www.indeed.com/cmp/{0}/jobs", company);
+                        if (!String.IsNullOrEmpty(company))
+                        {
+                            Console.WriteLine(String.Format("COMPANY LINK: {0}", lnk));
+                        }
+
+                        if (node.CssSelect(".jobtitle").FirstOrDefault().Attributes["href"] != null)
+                        {
+                            var link = String.Format("https://www.indeed.com/{0}", node.CssSelect(".jobtitle").FirstOrDefault().Attributes["href"].Value);
+                            if (!String.IsNullOrEmpty(link))
+                            {
+                                Console.WriteLine(String.Format("JOB LINK: {0}", link));
+                            }
+                        }
+
+
+
+
+                        var resp = "FALSE";
+                        if (node.CssSelect(".serp-ResponsiveEmployer").FirstOrDefault() != null)
+                        {
+                            resp = "TRUE";
+                            Console.WriteLine(String.Format("RESPONSIVE: {0}", resp));
+                        }
+
+
+                        // TEST
+
+
 
                         Console.WriteLine(Environment.NewLine);
                     }
